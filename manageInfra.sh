@@ -409,7 +409,7 @@ manageAll(){
 	initiateTempFolders
 	cd $execdir/tempdir
 	manageTFWorkspace "$appname-$env-$targRegion-$componenet"
-	createConfig "$manageflag" "$appname-$env-$targRegion-$componenet" "$execdir/tempdir/$componenet"	
+	createConfig "$manageflag" "$appname-$env-$targRegion-$componenet" "$execdir/tempdir/iac/$componenet"	
 	
 	runTFWorkspace "$appname-$env-$targRegion-$componenet" "$manageflag" 	
 
