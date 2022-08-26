@@ -17,8 +17,6 @@ initiateTempFolders(){
 		rm -rf $execdir/tempdir/temprepo
 		cp -R $execdir/variable.template.json $execdir/variableupdate.template.json $execdir/apply.json $execdir/workspace.template.json $execdir/configversion.json $execdir/run.template.json $execdir/tempdir
 	fi
-	ls -rtl $execdir
-	ls -rtl $execdir/tempdir
 }
 
 
@@ -201,9 +199,6 @@ createConfig(){
 	workspace=$2
 	config_dir=$3
 	workspace_id=""
-
-	pwd
-	ls -rtl $execdir/tempdir
 
 	workspace_id=($(${CURL_CMD} --header "Authorization: Bearer $TFE_TOKEN" --header "Content-Type: application/vnd.api+json" https://${TFE_ADDR}/api/v2/organizations/${TFE_ORG}/workspaces/${workspace} | jq -r '.data.id'))
 	if [ ! -z "$workspace_id" ]; then
