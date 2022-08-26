@@ -1,0 +1,14 @@
+{
+  "data": {
+    "id":"varid",
+    "attributes": {
+      "key":"my-key",
+      "value":"my-value",
+      "category":"my-category",
+      "hcl":my-hcl,
+      "sensitive":my-sensitive,
+      "description":"my-description"
+    },
+    "type":"vars"
+  }
+}

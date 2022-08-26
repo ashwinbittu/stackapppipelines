@@ -1,0 +1,11 @@
+{
+  "data":
+  {
+    "attributes": {
+      "name":"placeholder",
+      "operations": true,
+      "global-remote-state": true
+    },
+    "type":"workspaces"
+  }
+}
