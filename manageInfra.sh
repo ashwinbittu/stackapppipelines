@@ -1,25 +1,8 @@
 #!/bin/bash
 
-export TFE_TOKEN="<TFE_TOKEN>" #YOU NEED TO CREATE USER BASED TOKEN(Terraform Cloud WEBUI/User/settings/Tokens) OR CONFIG CREATION WILL FAIL
-export TFE_ORG="<TFE-ORG>"
-export TFE_ADDR="app.terraform.io"
 export execdir="$PWD"
 export CURL_CMD="curl -ks"
 export PATH=$PATH:$execdir
-
-export REPO_API_TOKEN="<GITHUB_Personal Access Token>" 
-export REPO_FID="<GITHUB_USER_ID>"
-
-export AWS_ACCESS_KEY_ID="<AWS_ACCESS_KEY_ID>"
-export AWS_SECRET_ACCESS_KEY="<AWS_SECRET_ACCESS_KEY>"
-export AWS_REGION="ap-southeast-2"
-
-export targetRegion=$AWS_REGION
-
-export env="dev"
-export appname="continoapp"
-
-
 
 initiateTempFolders(){
 	repo=""	
@@ -253,6 +236,7 @@ runTFWorkspace(){
 	save_plan="false"
 	override="no"
 	applied="false"
+	run_status=""
 	check_workspace_result=$(${CURL_CMD} --header "Authorization: Bearer $TFE_TOKEN" --header "Content-Type: application/vnd.api+json" "https://${TFE_ADDR}/api/v2/organizations/${TFE_ORG}/workspaces/${workspace}")
 	if [[ $check_workspace_result != *"404"* ]] ; then
 		workspace_id=$(echo $check_workspace_result | jq .[].id | sed 's/"//g')	  		  							
@@ -337,12 +321,19 @@ runTFWorkspace(){
 				#echo "check_results--2222-->>: ${check_result}"
 				apply_status=$(echo $check_result | jq '.data.attributes.status' | sed 's/"//g')
 				echo "Apply Status-->>${apply_status}"
-				if [[ "$apply_status" == "unreachable" ]]; then
-					echo "Couldn't Apply."
-					continue=0
-				elif [[ "$apply_status" == "finished" ]]; then
+				echo "run_status-->>${run_status}"
+				
+				#if [[ "$apply_status" == "unreachable" ]] && [[ "$run_status" == "planned_and_finished" ]] ; then
+				#	echo "Couldn't Apply."
+				#	exit 1
+				#elif [[ "$apply_status" == "finished" ]]; then	
+				
+				if [[ "$apply_status" == "finished" ]]; then
 					echo "Apply finished."
 					continue=0
+				elif [[ "$apply_status" == "canceled" ]]; then
+					echo "Apply was canceled."
+					continue=0					
 				elif [[ "$apply_status" == "errored" ]]; then
 					echo "Apply errored Please check the apply log"
 					exit 1					
@@ -442,11 +433,13 @@ checkAppURL(){
 }
 
 action=$1
-inst_type=$2
+inst_type=$2  
 tagname=$3
 
 if [ "$action" = "create" ]; then  
-	manageAll "application" "$targetRegion"	"false"	"true" "false"
+	manageAll "network" "$targetRegion"	"false"	"true" "false"
+	manageAll "application" "$targetRegion" "false" "true" "false"
 elif [ "$action" = "destroy" ]; then
-	manageAll "application" "$targetRegion"	"true" "false" "false"	 
+	manageAll "application" "$targetRegion" "true" "false" "false"
+	manageAll "network" "$targetRegion"	"true" "false" "false"	 
 fi
