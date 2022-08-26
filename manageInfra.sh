@@ -322,12 +322,10 @@ runTFWorkspace(){
 				echo "Apply Status-->>${apply_status}"
 				echo "run_status-->>${run_status}"
 				
-				#if [[ "$apply_status" == "unreachable" ]] && [[ "$run_status" == "planned_and_finished" ]] ; then
-				#	echo "Couldn't Apply."
-				#	exit 1
-				#elif [[ "$apply_status" == "finished" ]]; then	
-				
-				if [[ "$apply_status" == "finished" ]]; then
+				if [[ "$apply_status" == "unreachable" ]] && [[ "$run_status" == "planned_and_finished" ]] ; then
+					echo "Couldn't Apply."
+					break
+				elif [[ "$apply_status" == "finished" ]]; then									
 					echo "Apply finished."
 					continue=0
 				elif [[ "$apply_status" == "canceled" ]]; then
