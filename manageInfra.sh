@@ -324,7 +324,7 @@ runTFWorkspace(){
 				
 				if [[ "$apply_status" == "unreachable" ]] && [[ "$run_status" == "planned_and_finished" ]] ; then
 					echo "Couldn't Apply."
-					break
+					break 2
 				elif [[ "$apply_status" == "finished" ]]; then									
 					echo "Apply finished."
 					continue=0
@@ -371,24 +371,26 @@ runTFWorkspace(){
 
 			#echo "manageflag--->>"$manageflag
 
-			if [ "$manageflag" == "false" ]; then
-				firstpublicip=$(${CURL_CMD} $state_file_after_url | jq '.resources[] | select(.type == "aws_instance").instances[].attributes.public_ip' | sed 's/"//g'  | tr '\n' ' ' | awk '{print $1}')
-				#echo "firstpublicip--->>"$firstpublicip
-				sleep 15
-				output=$(/usr/bin/wget "http://"$firstpublicip --timeout 6 -O - 2>/dev/null | grep "Centene")
-				#echo $output
-				if [[ -n $output ]]; then
-						#echo "%s\n" "$output"
-						echo "Contino App is Up and Running, please check the URL: http://"$firstpublicip
-				else
-						echo "DOWN"
-				fi
-			fi
-			#echo "State file after the apply:"
+			#if [ "$manageflag" == "false" ]; then
+			#	firstpublicip=$(${CURL_CMD} $state_file_after_url | jq '.resources[] | select(.type == "aws_instance").instances[].attributes.public_ip' | sed 's/"//g'  | tr '\n' ' ' | awk '{print $1}')
+			#	echo "firstpublicip--->>"$firstpublicip
+			#	sleep 15
+			#	output=$(/usr/bin/wget "http://"$firstpublicip --timeout 6 -O - 2>/dev/null | grep "Centene")
+			#	#echo $output
+			#	if [[ -n $output ]]; then
+			#			#echo "%s\n" "$output"
+			#			echo "Contino App is Up and Running, please check the URL: http://"$firstpublicip
+			#	else
+			#			echo "DOWN"
+			#	fi
+			#fi
+			echo "State file after the apply:"
 			#${CURL_CMD} $state_file_after_url | tee ${apply_id}-after.tfstate
-		fi		
+		fi
+             		
 
 	fi
+	
 	#rm -rf run.json run-copy.json
 }
 
@@ -435,7 +437,7 @@ tagname=$3
 
 if [ "$action" = "create" ]; then  
 	manageAll "network" "$targetRegion"	"false"	"true" "false"
-	manageAll "application" "$targetRegion" "false" "true" "false"
+	#manageAll "application" "$targetRegion" "false" "true" "false"
 elif [ "$action" = "destroy" ]; then
 	manageAll "application" "$targetRegion" "true" "false" "false"
 	manageAll "network" "$targetRegion"	"true" "false" "false"	 
