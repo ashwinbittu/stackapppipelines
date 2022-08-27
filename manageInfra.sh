@@ -105,6 +105,7 @@ createTFVariables(){
 	set -e
 	workspace=$1
 	variables_file=$2
+	componenet=$3
 
 	#echo "workspace-->>$workspace"
 	#echo "variables_file-createTFVariables->>$variables_file"
@@ -158,7 +159,18 @@ createTFVariables(){
 			updateTFVariables $workspace "AWS_REGION" $AWS_REGION "env" "false" "true" "AWS_REGION"
 			updateTFVariables $workspace "aws_region" $AWS_REGION "terraform" "false" "true" "aws_region"
 			updateTFVariables $workspace "instance_type" $inst_type "terraform" "false" "false" "EC2InstnaceType"
-			updateTFVariables $workspace "name_tag" $tagname "terraform" "false" "false" "SrvKeyName"
+			#updateTFVariables $workspace "name_tag" $tagname "terraform" "false" "false" "SrvKeyName"
+
+			if [ "$componenet" == "application" ]; then
+				updateTFVariables $workspace "ami_id" $app_ami_id "terraform" "false" "false" "app_ami_id"
+			elif[ "$componenet" == "database" ]; then
+				updateTFVariables $workspace "ami_id" $db_ami_id "terraform" "false" "false" "db_ami_id"	
+			elif[ "$componenet" == "cache" ]; then
+				updateTFVariables $workspace "ami_id" $cache_ami_id "terraform" "false" "false" "cache_ami_id"
+			elif[ "$componenet" == "message" ]; then
+				updateTFVariables $workspace "ami_id" $mesg_ami_id "terraform" "false" "false" "mesg_ami_id"								
+			fi			
+
 
 			#AZs='[\"ap-southeast-2a\",\"ap-southeast-2b\",\"ap-southeast-2c\"]'
 			#Sunets='[\"subnet-az-2a\",\"subnet-az-2b\",\"subnet-az-2c\"]'
@@ -198,6 +210,7 @@ createConfig(){
 	destroyFlag=$1
 	workspace=$2
 	config_dir=$3
+	componenet=$4
 	workspace_id=""
 
 	workspace_id=($(${CURL_CMD} --header "Authorization: Bearer $TFE_TOKEN" --header "Content-Type: application/vnd.api+json" https://${TFE_ADDR}/api/v2/organizations/${TFE_ORG}/workspaces/${workspace} | jq -r '.data.id'))
@@ -217,7 +230,7 @@ createConfig(){
 					variables_file=${targetRegion}.csv
 				fi
 				if [ "$destroyFlag" == "false" ]; then
-					createTFVariables "$workspace" "$variables_file" 
+					createTFVariables "$workspace" "$variables_file" $componenet
 				fi	
 			fi
 		fi		
@@ -404,7 +417,7 @@ manageAll(){
 	initiateTempFolders
 	cd $execdir/tempdir
 	manageTFWorkspace "$appname-$env-$targRegion-$componenet"
-	createConfig "$manageflag" "$appname-$env-$targRegion-$componenet" "$execdir/tempdir/iac/$componenet"	
+	createConfig "$manageflag" "$appname-$env-$targRegion-$componenet" "$execdir/tempdir/iac/$componenet" $componenet
 	
 	runTFWorkspace "$appname-$env-$targRegion-$componenet" "$manageflag" 	
 
