@@ -163,12 +163,16 @@ createTFVariables(){
 
 			if [ "$componenet" == "application" ]; then
 				updateTFVariables $workspace "ami_id" $app_ami_id "terraform" "false" "false" "app_ami_id"
+				updateTFVariables $workspace "instdevice_name" "/dev/sda1" "terraform" "false" "false" "instdevice_name"
 			elif [ "$componenet" == "database" ]; then
 				updateTFVariables $workspace "ami_id" $db_ami_id "terraform" "false" "false" "db_ami_id"	
+				updateTFVariables $workspace "instdevice_name" "/dev/xvda" "terraform" "false" "false" "instdevice_name"				
 			elif [ "$componenet" == "cache" ]; then
 				updateTFVariables $workspace "ami_id" $cache_ami_id "terraform" "false" "false" "cache_ami_id"
+				updateTFVariables $workspace "instdevice_name" "/dev/xvda" "terraform" "false" "false" "instdevice_name"				
 			elif [ "$componenet" == "message" ]; then
-				updateTFVariables $workspace "ami_id" $mesg_ami_id "terraform" "false" "false" "mesg_ami_id"								
+				updateTFVariables $workspace "ami_id" $mesg_ami_id "terraform" "false" "false" "mesg_ami_id"
+				updateTFVariables $workspace "instdevice_name" "/dev/sda1" "terraform" "false" "false" "instdevice_name"												
 			fi			
 
 
