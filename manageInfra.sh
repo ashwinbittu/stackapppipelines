@@ -452,6 +452,6 @@ if [ "$action" = "create" ]; then
 	manageAll "network" "$targetRegion"	"false"	"true" "false"
 	manageAll "application" "$targetRegion" "false" "true" "false"
 elif [ "$action" = "destroy" ]; then
-	manageAll "application" "$targetRegion" "true" "false" "false"
+	#manageAll "application" "$targetRegion" "true" "false" "false"
 	manageAll "network" "$targetRegion"	"true" "false" "false"	 
 fi
