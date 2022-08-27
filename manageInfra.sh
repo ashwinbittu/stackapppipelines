@@ -163,11 +163,11 @@ createTFVariables(){
 
 			if [ "$componenet" == "application" ]; then
 				updateTFVariables $workspace "ami_id" $app_ami_id "terraform" "false" "false" "app_ami_id"
-			elif[ "$componenet" == "database" ]; then
+			elif [ "$componenet" == "database" ]; then
 				updateTFVariables $workspace "ami_id" $db_ami_id "terraform" "false" "false" "db_ami_id"	
-			elif[ "$componenet" == "cache" ]; then
+			elif [ "$componenet" == "cache" ]; then
 				updateTFVariables $workspace "ami_id" $cache_ami_id "terraform" "false" "false" "cache_ami_id"
-			elif[ "$componenet" == "message" ]; then
+			elif [ "$componenet" == "message" ]; then
 				updateTFVariables $workspace "ami_id" $mesg_ami_id "terraform" "false" "false" "mesg_ami_id"								
 			fi			
 
