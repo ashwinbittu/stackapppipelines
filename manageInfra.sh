@@ -454,10 +454,10 @@ tagname=$3
 
 if [ "$action" = "create" ]; then  
 	manageAll "network" "$targetRegion"	"false"	"true" "false"
-	#manageAll "application" "$targetRegion" "false" "true" "false"
-	#manageAll "database" "$targetRegion" "false" "true" "false"
-	#manageAll "cache" "$targetRegion" "false" "true" "false"
-	#manageAll "message" "$targetRegion" "false" "true" "false"
+	manageAll "application" "$targetRegion" "false" "true" "false"
+	manageAll "database" "$targetRegion" "false" "true" "false"
+	manageAll "cache" "$targetRegion" "false" "true" "false"
+	manageAll "message" "$targetRegion" "false" "true" "false"
 elif [ "$action" = "destroy" ]; then
 	#manageAll "message" "$targetRegion" "true" "false" "false"
 	#manageAll "cache" "$targetRegion" "true" "false" "false"
