@@ -406,10 +406,10 @@ manageTFWorkspace(){
 		echo "Workspace already existed."
 	fi
 
-	if [ -z "$workspace_id" ]; then
-		echo "Workspace ID not Found in manageTFWorkspace !!, existing Now"
-		exit 1
-	fi
+	#if [ -z "$workspace_id" ]; then
+	#	echo "Workspace ID not Found in manageTFWorkspace !!, existing Now"
+	#	exit 1
+	#fi
 }
 
 manageAll(){
