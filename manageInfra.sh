@@ -158,7 +158,7 @@ createTFVariables(){
 			updateTFVariables $workspace "AWS_SECRET_ACCESS_KEY" $AWS_SECRET_ACCESS_KEY "env" "false" "true" "AWS_SECRET_ACCESS_KEY"
 			updateTFVariables $workspace "AWS_REGION" $AWS_REGION "env" "false" "true" "AWS_REGION"
 			updateTFVariables $workspace "aws_region" $AWS_REGION "terraform" "false" "true" "aws_region"
-			updateTFVariables $workspace "instance_type" $inst_type "terraform" "false" "false" "EC2InstnaceType"
+			#updateTFVariables $workspace "instance_type" $inst_type "terraform" "false" "false" "EC2InstnaceType"
 			#updateTFVariables $workspace "name_tag" $tagname "terraform" "false" "false" "SrvKeyName"
 
 			if [ "$componenet" == "application" ]; then
@@ -449,15 +449,11 @@ checkAppURL(){
 }
 
 action=$1
-inst_type=$2  
-tagname=$3
+componenet=$2  
+
 
 if [ "$action" = "create" ]; then  
-	manageAll "network" "$targetRegion"	"false"	"true" "false"
-	manageAll "application" "$targetRegion" "false" "true" "false"
-	manageAll "database" "$targetRegion" "false" "true" "false"
-	manageAll "cache" "$targetRegion" "false" "true" "false"
-	manageAll "message" "$targetRegion" "false" "true" "false"
+	manageAll "$componenet" "$targetRegion"	"false"	"true" "false"
 elif [ "$action" = "destroy" ]; then
 	manageAll "message" "$targetRegion" "true" "false" "false"
 	manageAll "cache" "$targetRegion" "true" "false" "false"
