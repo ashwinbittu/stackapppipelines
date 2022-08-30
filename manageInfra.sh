@@ -186,30 +186,6 @@ createTFVariables(){
 	rm -rf varids.txt
 }
 
-manageTFWorkspace(){
-	workspace=$1
-	workspace_id=""
-	check_workspace_result=$(${CURL_CMD} --header "Authorization: Bearer $TFE_TOKEN" --header "Content-Type: application/vnd.api+json" "https://${TFE_ADDR}/api/v2/organizations/${TFE_ORG}/workspaces/${workspace}")
-	if [[ $check_workspace_result != *"404"* ]] ; then
-		workspace_id=$(echo $check_workspace_result | jq .[].id)	  		  							
-	fi
-
-	if [ -z "$workspace_id" ]; then
-		echo "Workspace did not already exist; will create it."
-		sed "s/placeholder/${workspace}/" < $execdir/tempdir/workspace.template.json > $execdir/tempdir/workspace.json
-		workspace_result=$(${CURL_CMD} --header "Authorization: Bearer $TFE_TOKEN" --header "Content-Type: application/vnd.api+json" --request POST --data @$execdir/tempdir/workspace.json "https://${TFE_ADDR}/api/v2/organizations/${TFE_ORG}/workspaces")
-		#echo "-->>>$workspace_result"
-		workspace_id=$(echo $workspace_result | jq .[].id)
-	else
-		echo "Workspace already existed."
-	fi
-
-	if [ -z "$workspace_id" ]; then
-		echo "Workspace ID not Found in manageTFWorkspace !!, existing Now"
-		exit 1
-	fi
-}
-
 createConfig(){
 	destroyFlag=$1
 	workspace=$2
@@ -411,6 +387,31 @@ runTFWorkspace(){
 	#rm -rf run.json run-copy.json
 }
 
+
+manageTFWorkspace(){
+	workspace=$1
+	workspace_id=""
+	check_workspace_result=$(${CURL_CMD} --header "Authorization: Bearer $TFE_TOKEN" --header "Content-Type: application/vnd.api+json" "https://${TFE_ADDR}/api/v2/organizations/${TFE_ORG}/workspaces/${workspace}")
+	if [[ $check_workspace_result != *"404"* ]] ; then
+		workspace_id=$(echo $check_workspace_result | jq .[].id)	  		  							
+	fi
+
+	if [[ -z "$workspace_id" ]] && [[ "$manageflag" == "false" ]] ; then
+		echo "Workspace did not already exist; will create it."
+		sed "s/placeholder/${workspace}/" < $execdir/tempdir/workspace.template.json > $execdir/tempdir/workspace.json
+		workspace_result=$(${CURL_CMD} --header "Authorization: Bearer $TFE_TOKEN" --header "Content-Type: application/vnd.api+json" --request POST --data @$execdir/tempdir/workspace.json "https://${TFE_ADDR}/api/v2/organizations/${TFE_ORG}/workspaces")
+		#echo "-->>>$workspace_result"
+		workspace_id=$(echo $workspace_result | jq .[].id)
+	else
+		echo "Workspace already existed."
+	fi
+
+	if [ -z "$workspace_id" ]; then
+		echo "Workspace ID not Found in manageTFWorkspace !!, existing Now"
+		exit 1
+	fi
+}
+
 manageAll(){
 	componenet=$1
 	targRegion=$2
@@ -420,10 +421,12 @@ manageAll(){
 
 	initiateTempFolders
 	cd $execdir/tempdir
-	manageTFWorkspace "$appname-$env-$targRegion-$componenet"
-	createConfig "$manageflag" "$appname-$env-$targRegion-$componenet" "$execdir/tempdir/iac/$componenet" $componenet
-	
-	runTFWorkspace "$appname-$env-$targRegion-$componenet" "$manageflag" 	
+	manageTFWorkspace "$appname-$env-$targRegion-$componenet" "$manageflag" 
+
+	if [ "$manageflag" == "false" ]; then
+		createConfig "$manageflag" "$appname-$env-$targRegion-$componenet" "$execdir/tempdir/iac/$componenet" $componenet	
+		runTFWorkspace "$appname-$env-$targRegion-$componenet" "$manageflag"
+	fi
 
 	if [ "$manageflag" == "true" ]; then
 		deleteWorkspace "$appname-$env-$targRegion-$componenet"  
