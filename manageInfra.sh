@@ -459,9 +459,9 @@ if [ "$action" = "create" ]; then
 	manageAll "cache" "$targetRegion" "false" "true" "false"
 	manageAll "message" "$targetRegion" "false" "true" "false"
 elif [ "$action" = "destroy" ]; then
-	#manageAll "message" "$targetRegion" "true" "false" "false"
-	#manageAll "cache" "$targetRegion" "true" "false" "false"
-	#manageAll "database" "$targetRegion" "true" "false" "false"
-	#manageAll "application" "$targetRegion" "true" "false" "false"
+	manageAll "message" "$targetRegion" "true" "false" "false"
+	manageAll "cache" "$targetRegion" "true" "false" "false"
+	manageAll "database" "$targetRegion" "true" "false" "false"
+	manageAll "application" "$targetRegion" "true" "false" "false"
 	manageAll "network" "$targetRegion"	"true" "false" "false"	 
 fi
